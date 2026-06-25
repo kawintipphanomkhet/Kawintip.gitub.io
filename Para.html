@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสารสนเทศ - Paramedic Student SCPHUB</title>
+    <meta name="description" content="วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://resource.trickle.so/vendor_lib/unpkg/react@18/umd/react.production.min.js"></script>
+    <script src="https://resource.trickle.so/vendor_lib/unpkg/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://resource.trickle.so/vendor_lib/unpkg/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style type="text/tailwindcss">
+    @layer theme {
+        :root {
+            --cra-dark-blue: #091524; 
+            --cra-menu-blue: #102a5e; 
+            --cra-orange: #ff5e00; 
+            --cra-orange-light: #ff8c42; 
+            --footer-blue: #003876;
+            --footer-orange: #ff6600;
+        }
+    }
+    @layer base {
+        html, body, #root {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f4f7f9;
+        }
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .overflow-x-auto::-webkit-scrollbar { display: none; }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Header = ({ currentPage, setCurrentPage }) => {
+            const topMenuLinks = [
+                "บุคลากร", "ผู้สนใจเข้าศึกษา", "นักศึกษาปัจจุบัน", 
+                "ศิษย์เก่า", "ระบบสารสนเทศ", "ดาวน์โหลดเอกสาร", "ร้องเรียน/ข้อเสนอแนะ"
+            ];
+            const bottomMenuLinks = [
+                "หน้าแรก", "เกี่ยวกับเรา", "หลักสูตร", "การจัดการศึกษา", 
+                "กิจกรรมนักศึกษา", "ข่าวสารและประกาศ", "ติดต่อเรา"
+            ];
+
+            return (
+                <header className="relative w-full z-50 min-w-[1200px]">
+                    <div className="bg-gradient-to-r from-[var(--cra-dark-blue)] to-[#112540] h-[44px] flex items-center pr-8 w-full border-b border-white/10 shadow-sm">
+                        <div className="w-[calc(8%+210px)]"></div>
+                        
+                        <div className="flex-1 flex justify-start pl-[170px]"> 
+                            <div className="flex items-center h-full text-white/80 text-[13px] font-light tracking-wide">
+                                {topMenuLinks.map((link, index) => {
+                                    const isActive = currentPage === link;
+                                    return (
+                                        <div key={index} className="flex items-center h-full relative group">
+                                            <button 
+                                                onClick={() => setCurrentPage(link)}
+                                                className={`relative py-1 text-left transition-all duration-300 ${index === 0 ? 'pr-4' : 'px-4'} ${
+                                                    isActive 
+                                                    ? 'text-[var(--cra-orange-light)] font-medium' 
+                                                    : 'hover:text-white text-white/70'
+                                                }`}
+                                            >
+                                                {link}
+                                            </button>
+                                            {index < topMenuLinks.length - 1 && (
+                                                <span className="text-white/20 text-[11px] font-extralight select-none">|</span>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center ml-auto gap-3">
+                            {['Facebook', 'Line', 'YouTube'].map((social, idx) => (
+                                <a key={idx} href="#" className="text-white/60 hover:text-[var(--cra-orange-light)] hover:scale-110 transition-all duration-300">
+                                    {idx === 0 && <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>}
+                                    {idx === 1 && <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.122.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-5.992zm-18.988 2.595h-2.604c-.334 0-.606-.272-.606-.606v-3.705c0-.334.272-.606.606-.606h2.604c.334 0 .605.272.605.606v1.246h-1.999v1.213h1.999v1.246c0 .334-.271.606-.605.606zm3.328 0h-1.298c-.334 0-.606-.272-.606-.606v-3.705c0-.334.272-.606.606-.606h1.298c.333 0 .605.272.605.606v3.705c0 .334-.272.606-.605.606zm6.348 0h-1.332c-.179 0-.348-.078-.466-.214l-2.072-2.394v2.002c0 .334-.272.606-.606.606h-1.298c-.334 0-.606-.272-.606-.606v-3.705c0-.334.272-.606.606-.606h1.331c.179 0 .348.078.466.214l2.072 2.394v-2.002c0-.334.272-.606.606-.606h1.299c.333 0 .605.272.605.606v3.705c0 .334-.272.606-.605.606zm5.823-2.459h-1.999v1.213h1.999c.334 0 .606.272.606.606v.034c0 .334-.272.606-.606.606h-2.604c-.334 0-.606-.272-.606-.606v-3.705c0-.334.272-.606.606-.606h2.604c.334 0 .606.272.606.606v.034c0 .334-.272.606-.606.606h-1.999v1.213z"/></svg>}
+                                    {idx === 2 && <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>}
+                                </a>
+                            ))}
+                            <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full w-[30px] h-[30px] ml-1 flex items-center justify-center font-semibold text-[11px] hover:bg-gradient-to-r hover:from-[var(--cra-orange)] hover:to-[#ff7a29] hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-[0_0_10px_rgba(255,94,0,0.5)]">
+                                EN
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/90 backdrop-blur-xl h-[65px] flex items-center pr-8 border-b border-gray-200/60 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] w-full relative z-40">
+                        <div className="w-[calc(8%+210px)]"></div>
+
+                        <nav className="flex-1 flex items-center h-full w-full justify-between pl-[170px]">
+                            <div className="flex items-center h-full">
+                                {bottomMenuLinks.map((link, index) => {
+                                    const isActive = currentPage === link;
+                                    return (
+                                        <div key={index} className="flex items-center h-full relative group">
+                                            <button 
+                                                onClick={() => setCurrentPage(link)}
+                                                className={`text-[var(--cra-menu-blue)] font-medium text-[15px] transition-all duration-300 hover:text-[var(--cra-orange)] h-full flex items-center ${
+                                                    index === 0 ? 'pr-5' : 'px-5'
+                                                } ${isActive ? 'text-[var(--cra-orange)] font-semibold' : ''}`}
+                                            >
+                                                {link}
+                                            </button>
+                                            {isActive && (
+                                                <span className="absolute bottom-[10px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--cra-orange)] shadow-[0_0_8px_rgba(255,94,0,0.8)]"></span>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            
+                            <div className="ml-auto pl-5 border-l border-gray-200/60 h-[30px] flex items-center">
+                                <button className="text-gray-400 hover:text-[var(--cra-orange)] hover:scale-110 transition-all duration-300 bg-gray-50 hover:bg-orange-50 p-2 rounded-full" aria-label="Search">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </nav>
+                    </div>
+
+                    <div className="absolute top-0 left-[8%] w-[220px] h-[145px] bg-gradient-to-b from-[var(--cra-dark-blue)] to-[#152a45] flex flex-col items-center justify-center shadow-[0_15px_40px_rgba(11,26,46,0.35)] rounded-b-2xl border-t-0 border-x border-b border-white/10 z-50">
+                        <div className="relative group p-1 mb-1">
+                            <div className="absolute inset-0 bg-[var(--cra-orange)] blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 rounded-full"></div>
+                            <img 
+                                src="app-icon.png" 
+                                alt="Paramedic SCPHUB Logo" 
+                                className="relative w-[88px] h-[88px] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.4)] transition-transform duration-500 group-hover:scale-105" 
+                            />
+                        </div>
+                        <div className="text-center z-10">
+                            <div className="text-[13px] font-bold tracking-[0.08em] bg-clip-text text-transparent bg-gradient-to-r from-[#ff9d5c] to-[var(--cra-orange)] mt-1">
+                                PARAMEDIC SCPHUB
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            );
+        };
+
+        const HomeSection = ({ setCurrentPage }) => {
+            return (
+                <div className="w-full animate-fade-in-up flex flex-col items-center">
+                    <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-gradient-to-br from-[#091524] to-[var(--cra-menu-blue)] overflow-hidden flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/30 z-10"></div>
+                        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=1920&h=600')` }}></div>
+                        
+                        <div className="relative z-20 text-center px-4 max-w-4xl">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-tight">PARAMEDIC SCPHUB</h1>
+                            <p className="text-xl md:text-3xl text-orange-300 font-semibold drop-shadow-md mb-8">วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี</p>
+                            <button onClick={() => setCurrentPage('ผู้สนใจเข้าศึกษา')} className="px-8 py-3.5 bg-[var(--cra-orange)] hover:bg-[#e65500] text-white rounded-full font-bold shadow-[0_10px_20px_rgba(255,94,0,0.3)] transition-transform hover:-translate-y-1 hover:scale-105 text-lg">
+                                สมัครเข้าศึกษา
+                            </button>
+                        </div>
+                        
+                        <div className="absolute bottom-8 flex gap-2 z-20">
+                            <div className="w-8 h-2 bg-[var(--cra-orange)] rounded-full shadow-sm"></div>
+                            <div className="w-2 h-2 bg-white/50 rounded-full cursor-pointer hover:bg-white transition-colors"></div>
+                            <div className="w-2 h-2 bg-white/50 rounded-full cursor-pointer hover:bg-white transition-colors"></div>
+                        </div>
+                    </div>
+
+                    <div className="w-full max-w-[1200px] mx-auto px-4 -mt-12 relative z-30">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                            <div onClick={() => setCurrentPage('หลักสูตร')} className="bg-white rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] p-6 md:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,94,0,0.15)] transition-all duration-300 group border border-gray-50">
+                                <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-50 text-[var(--cra-menu-blue)] rounded-full flex items-center justify-center mb-4 group-hover:bg-gradient-to-tr group-hover:from-[var(--cra-orange)] group-hover:to-orange-400 group-hover:text-white transition-all duration-300 shadow-inner">
+                                    <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                </div>
+                                <h3 className="text-[15px] md:text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)]">หลักสูตร</h3>
+                            </div>
+                            
+                            <div onClick={() => setCurrentPage('ผู้สนใจเข้าศึกษา')} className="bg-white rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] p-6 md:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,94,0,0.15)] transition-all duration-300 group border border-gray-50">
+                                <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-50 text-[var(--cra-menu-blue)] rounded-full flex items-center justify-center mb-4 group-hover:bg-gradient-to-tr group-hover:from-[var(--cra-orange)] group-hover:to-orange-400 group-hover:text-white transition-all duration-300 shadow-inner">
+                                    <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                </div>
+                                <h3 className="text-[15px] md:text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)]">รับสมัครนักศึกษา</h3>
+                            </div>
+                            
+                            <div onClick={() => setCurrentPage('กิจกรรมนักศึกษา')} className="bg-white rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] p-6 md:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,94,0,0.15)] transition-all duration-300 group border border-gray-50">
+                                <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-50 text-[var(--cra-menu-blue)] rounded-full flex items-center justify-center mb-4 group-hover:bg-gradient-to-tr group-hover:from-[var(--cra-orange)] group-hover:to-orange-400 group-hover:text-white transition-all duration-300 shadow-inner">
+                                    <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <h3 className="text-[15px] md:text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)]">กิจการนักศึกษา</h3>
+                            </div>
+
+                            <div onClick={() => setCurrentPage('ระบบสารสนเทศ')} className="bg-white rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.06)] p-6 md:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(255,94,0,0.15)] transition-all duration-300 group border border-gray-50">
+                                <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-50 text-[var(--cra-menu-blue)] rounded-full flex items-center justify-center mb-4 group-hover:bg-gradient-to-tr group-hover:from-[var(--cra-orange)] group-hover:to-orange-400 group-hover:text-white transition-all duration-300 shadow-inner">
+                                    <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <h3 className="text-[15px] md:text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)]">ระบบสารสนเทศ</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full bg-[#f4f7f9] pt-20 pb-16">
+                        <div className="max-w-[1200px] mx-auto px-4">
+                            <div className="flex flex-col md:flex-row justify-between items-end border-b-2 border-gray-200 pb-3 mb-10">
+                                <h2 className="text-3xl font-extrabold text-[var(--cra-dark-blue)] relative">
+                                    ข่าวประชาสัมพันธ์
+                                    <span className="absolute -bottom-[12px] left-0 w-24 h-1.5 bg-[var(--cra-orange)] rounded-t-lg"></span>
+                                </h2>
+                                <a href="#" className="text-[var(--cra-orange)] font-bold hover:text-[var(--cra-orange-light)] transition-colors mt-4 md:mt-0 flex items-center gap-1 group">
+                                    ดูข่าวทั้งหมด
+                                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </a>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col h-full hover:-translate-y-2">
+                                    <div className="h-52 bg-gray-200 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=600" alt="News" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <div className="absolute top-4 left-4 bg-gradient-to-r from-[var(--cra-orange)] to-orange-400 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md tracking-wider">ประกาศรับสมัคร</div>
+                                    </div>
+                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
+                                        <div className="flex items-center text-xs font-semibold text-gray-400 mb-3 gap-2">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            20 พฤษภาคม 2569
+                                        </div>
+                                        <h3 className="text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)] transition-colors line-clamp-3 mb-4 leading-relaxed">
+                                            ประกาศวิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี เรื่อง การรับสมัครบุคคลเข้าศึกษาหลักสูตรฉุกเฉินการแพทยบัณฑิต ประจำปีการศึกษา 2569 รอบที่ 1 Portfolio
+                                        </h3>
+                                        <div className="mt-auto pt-5 border-t border-gray-100">
+                                            <span className="text-[var(--cra-menu-blue)] group-hover:text-[var(--cra-orange)] text-sm font-bold flex items-center transition-colors">อ่านต่อ...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col h-full hover:-translate-y-2">
+                                    <div className="h-52 bg-gray-200 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/photo-1551076805-e18690c5e561?auto=format&fit=crop&q=80&w=600" alt="News" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <div className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md tracking-wider">ข่าวประชาสัมพันธ์</div>
+                                    </div>
+                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
+                                        <div className="flex items-center text-xs font-semibold text-gray-400 mb-3 gap-2">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            15 พฤษภาคม 2569
+                                        </div>
+                                        <h3 className="text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)] transition-colors line-clamp-3 mb-4 leading-relaxed">
+                                            พิธีปฐมนิเทศและมอบเสื้อกาวน์แก่นักศึกษาหลักสูตรฉุกเฉินการแพทยบัณฑิต รุ่นที่ 1 ประจำปีการศึกษา 2569
+                                        </h3>
+                                        <div className="mt-auto pt-5 border-t border-gray-100">
+                                            <span className="text-[var(--cra-menu-blue)] group-hover:text-[var(--cra-orange)] text-sm font-bold flex items-center transition-colors">อ่านต่อ...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col h-full hover:-translate-y-2">
+                                    <div className="h-52 bg-gray-200 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&q=80&w=600" alt="News" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <div className="absolute top-4 left-4 bg-gradient-to-r from-teal-500 to-green-400 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-md tracking-wider">กิจกรรมนักศึกษา</div>
+                                    </div>
+                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
+                                        <div className="flex items-center text-xs font-semibold text-gray-400 mb-3 gap-2">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            2 พฤษภาคม 2569
+                                        </div>
+                                        <h3 className="text-[17px] font-bold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)] transition-colors line-clamp-3 mb-4 leading-relaxed">
+                                            โครงการอบรมทักษะการช่วยชีวิตขั้นพื้นฐาน (CPR) และการใช้เครื่อง AED สำหรับประชาชนทั่วไป โดยนักศึกษาฉุกเฉินการแพทย์
+                                        </h3>
+                                        <div className="mt-auto pt-5 border-t border-gray-100">
+                                            <span className="text-[var(--cra-menu-blue)] group-hover:text-[var(--cra-orange)] text-sm font-bold flex items-center transition-colors">อ่านต่อ...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full bg-white py-16 border-y border-gray-200">
+                        <div className="w-full max-w-[1200px] mx-auto px-4 text-center">
+                            <h2 className="text-2xl font-extrabold text-[var(--cra-dark-blue)] mb-10 tracking-wide">แนะนำเครือข่ายความร่วมมือ</h2>
+                            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                                <div className="h-16 w-32 bg-gray-200 rounded-lg animate-pulse hover:bg-[var(--cra-orange)] hover:opacity-100 transition-all cursor-pointer"></div>
+                                <div className="h-16 w-32 bg-gray-200 rounded-lg animate-pulse hover:bg-[var(--cra-menu-blue)] hover:opacity-100 transition-all cursor-pointer"></div>
+                                <div className="h-16 w-32 bg-gray-200 rounded-lg animate-pulse hover:bg-[var(--cra-orange)] hover:opacity-100 transition-all cursor-pointer"></div>
+                                <div className="h-16 w-32 bg-gray-200 rounded-lg animate-pulse hover:bg-[var(--cra-menu-blue)] hover:opacity-100 transition-all cursor-pointer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const AdmissionSection = () => {
+            const [activeTab, setActiveTab] = useState('portfolio');
+            return (
+                <div className="pt-[70px] px-[5%] pb-20 max-w-[1400px] mx-auto animate-fade-in-up">
+                    <div className="bg-white rounded-t-xl border-b-[3px] border-[var(--cra-orange)] shadow-sm p-6 mb-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 bg-gradient-to-br from-[var(--cra-menu-blue)] to-[var(--cra-dark-blue)] rounded-xl flex items-center justify-center text-white shadow-md">
+                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-bold text-[var(--cra-dark-blue)] tracking-tight">ระบบรับสมัครเข้าศึกษา (Admission)</h1>
+                                    <p className="text-sm text-gray-500 mt-1">หลักสูตรฉุกเฉินการแพทยบัณฑิต วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี</p>
+                                </div>
+                            </div>
+                            <div>
+                                <button className="px-5 py-2.5 bg-[var(--cra-dark-blue)] text-white text-sm font-semibold rounded-lg hover:bg-[var(--cra-orange)] transition-colors shadow-sm">
+                                    + เข้าสู่ระบบผู้สมัคร
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="w-full lg:w-1/4 space-y-4">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                                <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                    <h3 className="font-bold text-[var(--cra-dark-blue)] text-sm uppercase">ระดับการศึกษา</h3>
+                                </div>
+                                <div className="p-2">
+                                    <button className="w-full text-left px-4 py-2.5 text-sm font-semibold text-[var(--cra-orange)] bg-orange-50 rounded-lg flex justify-between items-center">
+                                        ปริญญาตรี (Undergraduate)
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                                <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                    <h3 className="font-bold text-[var(--cra-dark-blue)] text-sm uppercase">รอบการรับสมัคร ปี 2569</h3>
+                                </div>
+                                <div className="p-0">
+                                    <button onClick={() => setActiveTab('portfolio')} className={`w-full text-left px-5 py-3 text-sm font-medium border-b border-gray-100 flex justify-between items-center transition-colors ${activeTab === 'portfolio' ? 'bg-blue-50 text-[var(--cra-menu-blue)] border-l-4 border-l-[var(--cra-menu-blue)]' : 'text-gray-600 hover:bg-gray-50 border-l-4 border-l-transparent'}`}>
+                                        รอบที่ 1 Portfolio
+                                        {activeTab === 'portfolio' && <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded font-bold">เปิดรับสมัคร</span>}
+                                    </button>
+                                    <button onClick={() => setActiveTab('quota')} className={`w-full text-left px-5 py-3 text-sm font-medium border-b border-gray-100 flex justify-between items-center transition-colors ${activeTab === 'quota' ? 'bg-blue-50 text-[var(--cra-menu-blue)] border-l-4 border-l-[var(--cra-menu-blue)]' : 'text-gray-600 hover:bg-gray-50 border-l-4 border-l-transparent'}`}>
+                                        รอบที่ 2 Quota
+                                    </button>
+                                    <button onClick={() => setActiveTab('admission')} className={`w-full text-left px-5 py-3 text-sm font-medium border-b border-gray-100 flex justify-between items-center transition-colors ${activeTab === 'admission' ? 'bg-blue-50 text-[var(--cra-menu-blue)] border-l-4 border-l-[var(--cra-menu-blue)]' : 'text-gray-600 hover:bg-gray-50 border-l-4 border-l-transparent'}`}>
+                                        รอบที่ 3 Admission
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-3/4">
+                            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-4">
+                                <div className="text-sm font-medium text-gray-700">
+                                    กำลังแสดงผล: <span className="text-[var(--cra-orange)] font-bold">{activeTab === 'portfolio' ? 'รอบที่ 1 Portfolio' : activeTab === 'quota' ? 'รอบที่ 2 Quota' : 'รอบที่ 3 Admission'}</span>
+                                </div>
+                                <div className="relative">
+                                    <input type="text" placeholder="ค้นหาโครงการ / หลักสูตร..." className="pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[var(--cra-orange)] w-64"/>
+                                    <svg className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                {activeTab === 'portfolio' && (
+                                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:border-gray-300 transition-colors">
+                                        <div className="bg-gray-50/80 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                                            <h3 className="font-bold text-[var(--cra-dark-blue)] text-lg">โครงการรับตรง (Portfolio) หลักสูตรฉุกเฉินการแพทยบัณฑิต</h3>
+                                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-bold border border-green-200">เปิดรับสมัคร</span>
+                                        </div>
+                                        <div className="p-6">
+                                            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                                                <div className="space-y-2 flex-1">
+                                                    <p className="text-sm font-semibold text-gray-800">คณะ/หลักสูตร: <span className="font-normal text-gray-600">ฉุกเฉินการแพทยบัณฑิต</span></p>
+                                                    <p className="text-sm font-semibold text-gray-800">กำหนดการรับสมัคร: <span className="font-normal text-gray-600">1 สิงหาคม 2569 - 15 กันยายน 2569</span></p>
+                                                    <p className="text-sm font-semibold text-gray-800">จำนวนรับ: <span className="font-normal text-[var(--cra-orange)] font-bold">40 ศึกษา</span></p>
+                                                </div>
+                                                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                                                    <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                                                        <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M11.362 2c4.156 0 2.638 6 2.638 6s6-1.65 6 2.457v11.543h-16v-20h7.362zm.827-2h-10.189v24h20v-14.386c0-2.391-6.648-9.614-9.811-9.614zm4.811 13h-2.628v3.686h.907v-1.472h1.49v-.732h-1.49v-.698h1.721v-.784zm-4.9 0h-1.599v3.686h1.599c.537 0 .961-.181 1.262-.535.555-.658.587-2.034-.062-2.692-.298-.3-.712-.459-1.2-.459zm-.692.783h.496c.473 0 .802.173.915.644.064.267.077.679-.021.948-.128.351-.381.528-.754.528h-.637v-2.12zm-2.74-.783h-1.668v3.686h.907v-1.277h.761c.619 0 1.064-.277 1.224-.763.095-.291.095-.597 0-.885-.16-.484-.606-.761-1.224-.761zm-.761.732h.546c.233 0 .411.085.495.245.059.112.059.255 0 .367-.084.16-.262.245-.495.245h-.546v-.857z"/></svg>
+                                                        อ่านประกาศ
+                                                    </button>
+                                                    <button className="flex items-center justify-center gap-2 px-6 py-2 bg-[var(--cra-orange)] text-white rounded-lg text-sm font-semibold hover:bg-[#e65500] shadow-sm transition-colors">
+                                                        สมัครเข้าศึกษา
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {activeTab === 'quota' && (
+                                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
+                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-gray-700">ยังไม่ถึงกำหนดเวลาเปิดรับสมัคร</h3>
+                                        <p className="text-sm text-gray-500 mt-2">รอบที่ 2 Quota จะเปิดรับสมัครในช่วงเดือน พฤศจิกายน 2569</p>
+                                    </div>
+                                )}
+                                {activeTab === 'admission' && (
+                                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
+                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-gray-700">ยังไม่ถึงกำหนดเวลาเปิดรับสมัคร</h3>
+                                        <p className="text-sm text-gray-500 mt-2">รอบที่ 3 Admission จะเปิดรับสมัครตามประกาศของระบบ TCAS</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const PersonnelSection = () => {
+            const staffMembers = [
+                { id: 1, name: "ผศ.ดร.พว.สุคนธ์ทิพย์ อรุณกมลพัฒน์", role: "หัวหน้าหลักสูตร", education: ["ปร.ด.วิทยาศาสตร์สุขภาพ", "พย.ม.เวชปฏิบัติชุมชน", "ป.กศ.พยาบาลศาสตร์และการผดุงครรภ์ชั้นสูง"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 2, name: "ดร.พว.ดวงกมล หน่อแก้ว", role: "อาจารย์ประจำหลักสูตร", education: ["ปร.ด.ศึกษาศาสตร์", "วท.บ.พยาบาลศาสตร์"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 3, name: "พว.กันยารัตน์ ชิราวุฒิ", role: "อาจารย์ประจำหลักสูตร", education: ["พยาบาลศาสตร์มหาบัณฑิต", "พยาบาลศาสตร์บัณฑิต"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 4, name: "ฉพ.วรากร นามจันทร์", role: "อาจารย์ประจำหลักสูตร", education: ["วท.บ.ฉุกเฉินการแพทย์ ราชวิทยาลัยจุฬาภรณ์"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 5, name: "นพ.ชัยพร บุญศรี", role: "อาจารย์ประจำหลักสูตร", education: ["แพทยศาสตร์บัณฑิต", "วุฒิบัตรสาขาเวชศาสตร์ฉุกเฉิน"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 6, name: "ดร.พว.ประภาพร สุวรัตน์ชัย", role: "อาจารย์ประจำหลักสูตร", education: ["ปร.ด.วิทยาศาสตร์ (เวชศาสตร์ชุมชน)", "วท.ม.วิทยาการระบาด", "การพยาบาลเฉพาะทาง พยาบาลเวชปฏิบัติฉุกเฉิน"], imageUrl: "https://via.placeholder.com/150?text=Instructor" },
+                { id: 7, name: "ฉพ.ธนพรรณ วิริยะกุล", role: "อาจารย์ประจำหลักสูตร", education: ["วท.บ.ฉุกเฉินการแพทย์ มหาวิทยาลัยมหาสารคาม"], imageUrl: "https://via.placeholder.com/150?text=Instructor" }
+            ];
+
+            return (
+                <div className="pt-[100px] px-[10%] pb-24 max-w-[1400px] mx-auto animate-fade-in-up">
+                    <div className="mb-16 text-center">
+                        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--cra-dark-blue)] to-[var(--cra-menu-blue)] inline-block relative pb-4 tracking-tight">
+                            ทำเนียบบุคลากร
+                            <span className="absolute bottom-0 left-[30%] w-[40%] h-[4px] bg-gradient-to-r from-[var(--cra-orange)] to-orange-300 rounded-full"></span>
+                        </h1>
+                        <p className="mt-4 text-gray-500 text-[15px] leading-relaxed">
+                            ภาควิชาฉุกเฉินการแพทย์ วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {staffMembers.map(staff => (
+                            <div key={staff.id} className="group bg-white/70 backdrop-blur-lg rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hover:shadow-[0_20px_40px_rgba(255,94,0,0.08)] hover:-translate-y-2 transition-all duration-500 border border-white flex flex-col items-center p-8 text-center relative">
+                                <div className="w-[130px] h-[130px] rounded-full p-1 bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-[var(--cra-orange)] group-hover:to-orange-300 transition-all duration-500 mb-6 shadow-sm">
+                                    <div className="w-full h-full rounded-full overflow-hidden border-4 border-white bg-white">
+                                        <img src={staff.imageUrl} alt={staff.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"/>
+                                    </div>
+                                </div>
+                                <h3 className="text-[17px] font-bold text-[#0b1a2e] mb-2 leading-snug group-hover:text-[var(--cra-orange)] transition-colors duration-300">{staff.name}</h3>
+                                <span className={`text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-5 inline-block shadow-sm ${staff.role === "หัวหน้าหลักสูตร" ? "bg-gradient-to-r from-[var(--cra-orange)] to-orange-400 text-white" : "bg-orange-50 text-[var(--cra-orange)] border border-orange-100"}`}>
+                                    {staff.role}
+                                </span>
+                                <div className="w-full border-t border-gray-100/80 pt-4 space-y-1.5 text-left align-top">
+                                    <span className="block text-[11px] font-semibold text-gray-400 mb-2 uppercase tracking-wider">คุณวุฒิการศึกษา</span>
+                                    {staff.education.map((edu, idx) => (
+                                        <p key={idx} className="text-[13px] text-gray-600 font-medium leading-relaxed pl-3 border-l-2 border-gray-200 group-hover:border-[var(--cra-orange-light)] transition-colors duration-300">
+                                            {edu}
+                                        </p>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const StudentsSection = () => {
+            return (
+                <div className="pt-[100px] px-[10%] pb-20 max-w-[1200px] mx-auto animate-fade-in-up">
+                    <div className="mb-16 text-center">
+                        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--cra-dark-blue)] to-[var(--cra-menu-blue)] inline-block relative pb-4 tracking-tight">
+                            นักศึกษาปัจจุบัน
+                            <span className="absolute bottom-0 left-[30%] w-[40%] h-[4px] bg-gradient-to-r from-[var(--cra-orange)] to-orange-300 rounded-full"></span>
+                        </h1>
+                        <p className="mt-4 text-gray-500 text-[15px] leading-relaxed">
+                            หลักสูตรฉุกเฉินการแพทยบัณฑิต วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-white p-8 md:p-10 flex items-center justify-between hover:shadow-[0_20px_40px_rgba(255,94,0,0.08)] hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-100 to-transparent opacity-50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="space-y-3 relative z-10">
+                                <span className="inline-block px-3 py-1 bg-blue-50 text-[var(--cra-menu-blue)] text-xs font-bold rounded-full uppercase tracking-wider">Current Class</span>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)] transition-colors duration-300">
+                                    Paramedic Student รุ่นที่ 1
+                                </h2>
+                                <p className="text-[15px] text-gray-500 font-medium">นักศึกษาชั้นปีระดับสูง / ภาคปฏิบัติการชั้นคลินิก</p>
+                            </div>
+                            <div className="text-center bg-gradient-to-b from-orange-50 to-white border border-orange-100 p-5 rounded-2xl group-hover:from-[var(--cra-orange)] group-hover:to-[#ff7a29] transition-all duration-500 shadow-sm relative z-10 min-w-[110px]">
+                                <span className="block text-4xl font-black text-[var(--cra-orange)] group-hover:text-white tracking-tight drop-shadow-sm">42</span>
+                                <span className="text-sm font-semibold text-gray-500 group-hover:text-white/90 mt-1 block">คน</span>
+                            </div>
+                        </div>
+
+                        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-white p-8 md:p-10 flex items-center justify-between hover:shadow-[0_20px_40px_rgba(255,94,0,0.08)] hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-transparent opacity-50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                            <div className="space-y-3 relative z-10">
+                                <span className="inline-block px-3 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-full uppercase tracking-wider">New Class</span>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--cra-dark-blue)] group-hover:text-[var(--cra-orange)] transition-colors duration-300">
+                                    Paramedic Student รุ่นที่ 2
+                                </h2>
+                                <p className="text-[15px] text-gray-500 font-medium">นักศึกษาชั้นปีเริ่มต้น / ภาคทฤษฎีและพรีคลินิก</p>
+                            </div>
+                            <div className="text-center bg-gradient-to-b from-orange-50 to-white border border-orange-100 p-5 rounded-2xl group-hover:from-[var(--cra-orange)] group-hover:to-[#ff7a29] transition-all duration-500 shadow-sm relative z-10 min-w-[110px]">
+                                <span className="block text-4xl font-black text-[var(--cra-orange)] group-hover:text-white tracking-tight drop-shadow-sm">47</span>
+                                <span className="text-sm font-semibold text-gray-500 group-hover:text-white/90 mt-1 block">คน</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ContactSection = () => {
+            return (
+                <div className="pt-[100px] px-[10%] pb-20 max-w-[1000px] mx-auto animate-fade-in-up">
+                    <div className="mb-16 text-center">
+                        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--cra-dark-blue)] to-[var(--cra-menu-blue)] inline-block relative pb-4 tracking-tight">
+                            ติดต่อเรา
+                            <span className="absolute bottom-0 left-[30%] w-[40%] h-[4px] bg-gradient-to-r from-[var(--cra-orange)] to-orange-300 rounded-full"></span>
+                        </h1>
+                        <p className="mt-4 text-gray-500 text-[15px] leading-relaxed">
+                            ภาควิชาฉุกเฉินการแพทย์ วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี
+                        </p>
+                    </div>
+
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-white p-10 md:p-14 relative overflow-hidden">
+                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-orange-200 to-transparent opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-tr from-blue-200 to-transparent opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                            <div className="flex items-start space-x-6 group">
+                                <div className="bg-gradient-to-br from-orange-50 to-orange-100 text-[var(--cra-orange)] p-5 rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-300 border border-orange-200/50">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.48-4.18-7.076-7.075l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-[var(--cra-dark-blue)] mb-2">เบอร์โทรศัพท์</h3>
+                                    <p className="text-gray-700 font-semibold text-[18px] tracking-wide">0 4521 0270–74</p>
+                                    <p className="text-sm text-gray-400 mt-1.5 flex items-center"><span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>ในวันและเวลาราชการ</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start space-x-6 group">
+                                <div className="bg-gradient-to-br from-blue-50 to-blue-100 text-[var(--cra-menu-blue)] p-5 rounded-2xl shadow-inner group-hover:scale-110 transition-transform duration-300 border border-blue-200/50">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-[var(--cra-dark-blue)] mb-3">ข้อมูลติดต่อหลัก (ที่อยู่)</h3>
+                                    <p className="text-gray-600 text-[15px] leading-[1.8] font-medium">
+                                        วิทยาลัยการสาธารณสุขสิรินธร จ.อุบลฯ<br/>
+                                        เลขที่ 187 หมู่ 10 ถนนสถลมาร์ค<br/>
+                                        ตำบลธาตุ อำเภอวารินชำราบ<br/>
+                                        จังหวัดอุบลราชธานี 34190
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const RegisterModal = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+            const [formData, setFormData] = useState({ prefix: 'นาย', name: '', studentId: '', dobDay: '', dobMonth: '', dobYear: '', age: '', phone: '', email: '', password: '', confirmPassword: '', emergencyPhone1: '', emergencyPhone2: '', disease: '', address: '', consent: false });
+
+            const calculateAgeFromBE = (day, month, yearBE) => {
+                if (!day || !month || !yearBE) return '';
+                const today = new Date();
+                const birthYearCE = parseInt(yearBE) - 543;
+                let age = today.getFullYear() - birthYearCE;
+                if (today.getMonth() + 1 - parseInt(month) < 0 || (today.getMonth() + 1 === parseInt(month) && today.getDate() < parseInt(day))) age--;
+                return age >= 0 ? age : '';
+            };
+
+            const handleChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setFormData(prev => {
+                    const updated = { ...prev, [name]: type === 'checkbox' ? checked : value };
+                    if (['dobDay', 'dobMonth', 'dobYear'].includes(name)) updated.age = calculateAgeFromBE(updated.dobDay, updated.dobMonth, updated.dobYear);
+                    return updated;
+                });
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (formData.password.charAt(0) === '0') return alert('ห้ามตั้งรหัสผ่านที่ขึ้นต้นด้วย 0 โปรดแก้ไขรหัสผ่านของคุณใหม่');
+                if (formData.password !== formData.confirmPassword) return alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน โปรดตรวจสอบอีกครั้ง');
+                alert('ลงทะเบียนสำเร็จ! ระบบกำลังตรวจสอบข้อมูลบัญชีของคุณ');
+                onClose();
+            };
+
+            return (
+                <div className="fixed inset-0 bg-[var(--cra-dark-blue)]/60 backdrop-blur-md flex justify-center items-center z-[100] p-4 overflow-y-auto animate-fade-in-up">
+                    <div className="bg-white rounded-3xl shadow-2xl border border-white p-8 w-full max-w-2xl my-8 text-left max-h-[90vh] overflow-y-auto relative">
+                        <div className="flex justify-between items-start border-b border-gray-100 pb-4 mb-6 sticky top-0 bg-white z-10 pt-2">
+                            <div>
+                                <h3 className="text-2xl font-extrabold text-[var(--cra-dark-blue)] tracking-tight mb-1">ลงทะเบียนใช้งานระบบใหม่</h3>
+                                <div className="flex flex-col items-start space-y-0.5">
+                                    <span className="text-[13px] font-bold text-[var(--cra-orange)]">หลักสูตรฉุกเฉินการแพทยบัณฑิต</span>
+                                    <span className="text-[12px] font-medium text-gray-600">วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี</span>
+                                </div>
+                            </div>
+                            <button onClick={onClose} className="bg-gray-50 text-gray-400 hover:text-[var(--cra-orange)] hover:bg-orange-50 w-10 h-10 rounded-full flex items-center justify-center transition-all">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L12 12M12 12l6 6M12 12l-6-6"/></svg>
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="col-span-1"><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">คำนำหน้า</label><select name="prefix" value={formData.prefix} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"><option>นาย</option><option>นาง</option><option>นางสาว</option></select></div>
+                                    <div className="col-span-2"><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">ชื่อ-นามสกุล</label><input type="text" name="name" required value={formData.name} onChange={handleChange} placeholder="ชื่อ และ นามสกุลจริง" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                </div>
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">รหัสนักศึกษา</label><input type="text" name="studentId" value={formData.studentId} onChange={handleChange} placeholder="ระบุรหัสนักศึกษาของคุณ" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                
+                                <div className="col-span-1 md:col-span-2 bg-gradient-to-r from-gray-50 to-white p-4 rounded-2xl border border-gray-100 grid grid-cols-12 gap-3 shadow-sm">
+                                    <div className="col-span-3"><label className="block text-xs font-bold text-gray-500 mb-1.5">วันเกิด</label><select name="dobDay" required value={formData.dobDay} onChange={handleChange} className="w-full px-2 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"><option value="">วัน</option>{Array.from({length:31},(_,i)=>i+1).map(d=><option key={d} value={d}>{d}</option>)}</select></div>
+                                    <div className="col-span-4"><label className="block text-xs font-bold text-gray-500 mb-1.5">เดือนเกิด</label><select name="dobMonth" required value={formData.dobMonth} onChange={handleChange} className="w-full px-2 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"><option value="">เดือน</option>{["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."].map((m,i)=><option key={i+1} value={i+1}>{m}</option>)}</select></div>
+                                    <div className="col-span-3"><label className="block text-xs font-bold text-[var(--cra-orange)] mb-1.5">ปี (พ.ศ.)</label><select name="dobYear" required value={formData.dobYear} onChange={handleChange} className="w-full px-2 py-3 bg-white border border-orange-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all font-semibold text-[var(--cra-orange)]"><option value="">พ.ศ.</option>{Array.from({length:80},(_,i)=>2569-i).map(y=><option key={y} value={y}>{y}</option>)}</select></div>
+                                    <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 mb-1.5 text-center">อายุ</label><input type="text" value={formData.age} readOnly placeholder="-" className="w-full px-2 py-3 bg-gray-100 border-none rounded-xl text-sm font-black text-center text-gray-700"/></div>
+                                </div>
+
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">เบอร์ติดต่อ <span className="text-red-500">*</span></label><input type="tel" name="phone" required value={formData.phone} onChange={handleChange} placeholder="08X-XXX-XXXX" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">อีเมล <span className="text-red-500">*</span></label><input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="email@example.com" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">ตั้งรหัสผ่าน <span className="text-red-500">*</span></label><input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="อย่างน้อย 8 ตัวอักษร" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/>
+                                    <p className="text-[11px] text-orange-500 mt-2 font-semibold flex items-center bg-orange-50 px-2 py-1 rounded-md w-fit"><svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>ห้ามตั้งรหัสผ่านที่ขึ้นต้นด้วย 0</p>
+                                </div>
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">ยืนยันรหัสผ่าน <span className="text-red-500">*</span></label><input type="password" name="confirmPassword" required value={formData.confirmPassword} onChange={handleChange} placeholder="ยืนยันรหัสผ่านอีกครั้ง" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">เบอร์ติดต่อฉุกเฉิน 1 <span className="text-red-500">*</span></label><input type="tel" name="emergencyPhone1" required value={formData.emergencyPhone1} onChange={handleChange} placeholder="บุคคลที่ 1" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">เบอร์ติดต่อฉุกเฉิน 2</label><input type="tel" name="emergencyPhone2" value={formData.emergencyPhone2} onChange={handleChange} placeholder="บุคคลที่ 2 (ถ้ามี)" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                                <div className="col-span-1 md:col-span-2"><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">โรคประจำตัว / อาการแพ้</label><input type="text" name="disease" value={formData.disease} onChange={handleChange} placeholder="ระบุโรคประจำตัว (ถ้าไม่มีให้เว้นว่างหรือขีด -)" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all"/></div>
+                            </div>
+                            <div><label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">ที่อยู่ปัจจุบัน</label><textarea name="address" rows="2" value={formData.address} onChange={handleChange} placeholder="บ้านเลขที่ หมู่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์" className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--cra-orange)] transition-all resize-none"></textarea></div>
+                            <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-2">
+                                <label className="flex items-start cursor-pointer group">
+                                    <input type="checkbox" required checked={formData.consent} onChange={handleChange} className="w-5 h-5 rounded-md border-gray-300 text-[var(--cra-orange)] focus:ring-[var(--cra-orange)] mr-3 mt-0.5" />
+                                    <span className="text-[13px] text-gray-600 leading-relaxed font-medium group-hover:text-gray-800 transition-colors">ฉันยินยอมให้นำข้อมูลไปใช้ตาม <span className="text-[var(--cra-dark-blue)] font-bold">พรบ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ.2564</span> ประกอบ พรบ.คอมพิวเตอร์</span>
+                                </label>
+                            </div>
+                            <div className="flex gap-4 justify-end pt-6 mt-2 border-t border-gray-100">
+                                <button type="button" onClick={onClose} className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-xl transition-all">ยกเลิก</button>
+                                <button type="submit" disabled={!formData.consent} className={`px-8 py-3 text-white text-sm font-bold rounded-xl transition-all duration-300 ${formData.consent ? 'bg-gradient-to-r from-[var(--cra-orange)] to-[#ff7a29] hover:from-[#ff7a29] hover:to-[#ff8c42] shadow-[0_8px_20px_rgba(255,94,0,0.25)] hover:shadow-[0_12px_25px_rgba(255,94,0,0.35)] hover:-translate-y-0.5' : 'bg-gray-400 cursor-not-allowed opacity-60'}`}>
+                                    ยืนยันการลงทะเบียน
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const LoginSection = () => {
+            const [loginType, setLoginType] = useState("student"); 
+            const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
+            return (
+                <div className="pt-[110px] pb-20 flex justify-center items-center px-4 animate-fade-in-up">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-orange-200/40 to-blue-200/40 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(11,26,46,0.08)] border border-white p-10 w-full max-w-[460px] transition-all relative overflow-hidden">
+                        
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-inner border border-white">
+                                <svg className="w-8 h-8 text-[var(--cra-orange)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+                            </div>
+                            <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--cra-dark-blue)] to-[var(--cra-menu-blue)] tracking-tight mb-2">เข้าสู่ระบบสารสนเทศ</h2>
+                            <div className="flex flex-col items-center space-y-1">
+                                <span className="text-[15px] font-bold text-[var(--cra-orange)]">หลักสูตรฉุกเฉินการแพทยบัณฑิต</span>
+                                <span className="text-[13px] font-medium text-gray-600">วิทยาลัยการสาธารณสุขสิรินธร จังหวัดอุบลราชธานี</span>
+                            </div>
+                        </div>
+
+                        <div className="flex bg-gray-100/80 p-1.5 rounded-2xl mb-8 select-none border border-gray-200/50">
+                            <button onClick={() => setLoginType("student")} className={`flex-1 py-3 text-[14px] font-bold rounded-xl transition-all duration-300 ${loginType === "student" ? "bg-white text-[var(--cra-orange)] shadow-[0_4px_10px_rgba(0,0,0,0.05)]" : "text-gray-400 hover:text-gray-600"}`}>นักศึกษา</button>
+                            <button onClick={() => setLoginType("staff")} className={`flex-1 py-3 text-[14px] font-bold rounded-xl transition-all duration-300 ${loginType === "staff" ? "bg-white text-[var(--cra-dark-blue)] shadow-[0_4px_10px_rgba(0,0,0,0.05)]" : "text-gray-400 hover:text-gray-600"}`}>เจ้าหน้าที่</button>
+                        </div>
+                        <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+                            <div><label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">{loginType === "student" ? "รหัสนักศึกษา / ชื่อผู้ใช้" : "ชื่อผู้ใช้ (Username)"}</label><input type="text" placeholder={loginType === "student" ? "ระบุรหัสนักศึกษา" : "ระบุชื่อผู้ใช้งาน"} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[var(--cra-orange)] focus:bg-white transition-all text-sm font-medium"/></div>
+                            <div><label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">รหัสผ่าน (Password)</label><input type="password" placeholder="••••••••" className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[var(--cra-orange)] focus:bg-white transition-all text-sm font-medium tracking-widest"/></div>
+                            <div className="flex items-center justify-between text-[13px] pt-2 pb-2"><label className="flex items-center text-gray-500 cursor-pointer font-medium hover:text-gray-700 transition-colors"><input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[var(--cra-orange)] focus:ring-[var(--cra-orange)] mr-2" />จดจำฉันไว้</label><a href="#" className="text-[var(--cra-orange)] font-bold hover:text-[var(--cra-orange-light)] transition-colors">ลืมรหัสผ่าน?</a></div>
+                            <button type="submit" className="w-full py-4 bg-gradient-to-r from-[var(--cra-dark-blue)] to-[#152a45] hover:from-[var(--cra-orange)] hover:to-[#ff7a29] text-white font-bold rounded-2xl transition-all duration-500 shadow-[0_8px_20px_rgba(11,26,46,0.15)] hover:shadow-[0_12px_25px_rgba(255,94,0,0.3)] hover:-translate-y-1 text-[15px] mt-2">เข้าสู่ระบบ</button>
+                        </form>
+                        {loginType === "student" && (
+                            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                                <p className="text-[13px] text-gray-500 font-medium">ยังไม่เคยใช้งานระบบใช่หรือไม่? <button onClick={() => setIsRegisterOpen(true)} className="text-[var(--cra-orange)] font-bold hover:text-[var(--cra-orange-light)] transition-colors ml-1">ลงทะเบียนใหม่</button></p>
+                            </div>
+                        )}
+                    </div>
+                    <RegisterModal isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)} />
+                </div>
+            );
+        };
+
+        const Footer = () => {
+            return (
+                <footer className="bg-white border-t border-gray-200 mt-auto pt-16 font-prompt">
+                    <div className="max-w-[1400px] mx-auto px-[5%]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8">
+                            
+                            {/* Column 1 */}
+                            <div className="space-y-4">
+                                <h3 className="text-[20px] font-bold text-[var(--footer-blue)] mb-6">ราชวิทยาลัยจุฬาภรณ์</h3>
+                                <p className="text-[var(--footer-blue)] text-[15px] leading-relaxed pr-4 font-medium">
+                                    ๙๐๖ ถ.กำแพงเพชร ๖ แขวงตลาดบางเขน เขตหลักสี่ กรุงเทพมหานคร ๑๐๒๑๐
+                                </p>
+                                <div className="flex items-center text-[var(--footer-orange)] font-semibold text-[15px] gap-3 pt-3">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                                    <span>CRA Contact Center โทร ๑๑๑๘</span>
+                                </div>
+                                <div className="flex items-start text-[var(--footer-orange)] font-semibold text-[15px] gap-3 pt-2">
+                                    <svg className="w-5 h-5 mt-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+                                    <div>
+                                        <span>Saraban.cra@cra.ac.th</span>
+                                        <span className="block text-[14px] font-medium mt-1 leading-snug">(สำหรับการรับ-ส่งหนังสือ<br/>อิเล็กทรอนิกส์ของส่วนราชการ)</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center text-[var(--footer-orange)] font-semibold text-[15px] gap-3 pt-3">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span>แผนที่และการเดินทาง</span>
+                                </div>
+                                <div className="flex gap-2 pt-4">
+                                    <a href="#" className="text-[var(--footer-blue)] hover:opacity-80 transition-opacity">
+                                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="12"/><path fill="#fff" d="M15.4 8.7h-2.1c-.5 0-.9.4-.9.9v1.6h2.9l-.4 3h-2.5v7.7h-3.1v-7.7H7.7v-3h1.6V8.9c0-1.8 1.1-2.8 2.7-2.8 1.1 0 2.1.1 2.3.1v2.5z"/></svg>
+                                    </a>
+                                    <a href="#" className="text-[var(--footer-blue)] hover:opacity-80 transition-opacity">
+                                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.3.5.6.2 1.1.6 1.6 1.1.5.5.8 1 1.1 1.6.2.5.4 1.2.5 2.3.1 1.2.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.5 2.3-.2.6-.6 1.1-1.1 1.6-.5.5-1 .8-1.6 1.1-.5.2-1.2.4-2.3.5-1.2.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.3-.5-.6-.2-1.1-.6-1.6-1.1-.5-.5-.8-1-1.1-1.6-.2-.5-.4-1.2-.5-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.5-2.3.2-.6.6-1.1 1.1-1.6.5-.5 1-.8 1.6-1.1.5-.2 1.2-.4 2.3-.5 1.2-.1 1.7-.1 4.9-.1M12 0C8.7 0 8.3 0 7.1.1 5.8.1 4.9.3 4.2.6 3.4.9 2.7 1.3 2 2 1.3 2.7.9 3.4.6 4.2.3 4.9.1 5.8 0 7.1 0 12c0 3.3 0 3.7.1 4.9.1 1.3.3 2.2.6 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.7.3 1.6.5 2.9.6C8.3 24 8.7 24 12 24c3.3 0 3.7 0 4.9-.1 1.3-.1 2.2-.3 2.9-.6.8-.3 1.5-.7 2.2-1.4.7-.7 1.1-1.4 1.4-2.2-.7-.7-1.4-1.1-2.2-1.4-.7-.3-1.6-.5-2.9-.6C15.7 0 15.3 0 12 0zm0 5.8c-3.4 0-6.2 2.8-6.2 6.2s2.8 6.2 6.2 6.2 6.2-2.8 6.2-6.2-2.8-6.2-6.2-6.2zm0 10.2c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm6.4-11.4c-.8 0-1.4.6-1.4 1.4 0 .8.6 1.4 1.4 1.4.8 0 1.4-.6 1.4-1.4 0-.8-.6-1.4-1.4-1.4z"/></svg>
+                                    </a>
+                                    <a href="#" className="text-[var(--footer-blue)] hover:opacity-80 transition-opacity">
+                                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Column 2 */}
+                            <div>
+                                <h3 className="text-[18px] font-bold text-[var(--footer-blue)] mb-6">เว็บไซต์ส่วนงานที่เกี่ยวข้อง</h3>
+                                <ul className="space-y-4 text-[var(--footer-blue)] text-[14px] font-semibold">
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">วิทยาลัยวิทยาศาสตร์การแพทย์เจ้าฟ้าจุฬาภรณ์</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">สำนักบริหารวิจัยและนวัตกรรม</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">โรงพยาบาลจุฬาภรณ์</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">คณะเทคโนโลยีวิทยาศาสตร์สุขภาพ</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">คณะพยาบาลศาสตร์อัครราชกุมารี</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">คณะแพทยศาสตร์ศรีสวางควัฒน</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">คณะวิทยาศาสตร์</a></li>
+                                    <li><a href="#" className="hover:text-[var(--footer-orange)] transition-colors">มูลนิธิศรีสวางควัฒน ในพระอุปถัมภ์ฯ</a></li>
+                                </ul>
+                            </div>
+
+                            {/* Column 3 */}
+                            <div className="space-y-8 pl-0 lg:pl-6 flex flex-col justify-start pt-2">
+                                <div className="flex items-center gap-5 cursor-pointer group">
+                                    <div className="relative">
+                                        <svg className="w-[50px] h-[50px] text-[var(--footer-orange)]" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[var(--footer-blue)] font-bold text-[18px] group-hover:text-[var(--footer-orange)] transition-colors">รับฟังความคิดเห็น</h4>
+                                        <p className="text-[var(--footer-blue)] text-[12px] font-semibold">แนะนำติชม/ร้องเรียน</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-5 cursor-pointer group">
+                                    <div className="relative border-4 border-[var(--footer-orange)] rounded-lg w-[50px] h-[40px] flex items-center justify-center text-[var(--footer-orange)] bg-transparent">
+                                        <span className="font-extrabold text-[15px]">CRA</span>
+                                        <div className="absolute -bottom-3 w-6 h-2 bg-[var(--footer-orange)]"></div>
+                                        <div className="absolute -bottom-4 w-10 h-1 bg-[var(--footer-orange)]"></div>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[var(--footer-blue)] font-bold text-[18px] group-hover:text-[var(--footer-orange)] transition-colors tracking-wide">E -SERVICE</h4>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-5 cursor-pointer group">
+                                    <div className="relative w-[50px] h-[50px] flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-[var(--footer-orange)] transform rotate-45 rounded-sm"></div>
+                                        <div className="absolute inset-[3px] bg-white transform rotate-45 rounded-sm"></div>
+                                        <span className="relative z-10 font-extrabold text-[var(--footer-orange)] text-[15px] tracking-tighter">OIT</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[var(--footer-blue)] font-bold text-[17px] group-hover:text-[var(--footer-orange)] transition-colors">การเปิดเผยข้อมูลสาธารณะ</h4>
+                                        <p className="text-[var(--footer-blue)] text-[9px] font-semibold leading-tight uppercase mt-0.5">Open Data Integrity and Transparency<br/>Assessment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-16 flex flex-col lg:flex-row justify-between items-center border-t border-gray-200 pl-0 lg:pl-[5%]">
+                        <div className="text-[var(--footer-blue)] text-[15px] font-medium py-6 px-[5%] lg:px-0 w-full lg:w-auto text-center lg:text-left">
+                            © ๒๐๒๕ by Chulabhorn. All Rights Reserved
+                        </div>
+                        <div className="flex flex-col md:flex-row items-center w-full lg:w-auto mt-4 lg:mt-0">
+                            <a href="#" className="text-[var(--footer-blue)] text-[17px] font-bold md:mr-10 pb-6 md:pb-0 hover:text-[var(--footer-orange)] transition-colors">
+                                นโยบายเกี่ยวกับข้อมูลส่วนบุคคล
+                            </a>
+                            <button className="bg-[var(--footer-orange)] hover:bg-[#e65c00] transition-colors text-white px-12 py-5 flex items-center justify-center gap-3 text-[20px] font-bold w-full md:w-auto">
+                                <svg className="w-6 h-6 transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                GPS
+                            </button>
+                        </div>
+                    </div>
+                </footer>
+            );
+        };
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState("หน้าแรก");
+
+            const renderContent = () => {
+                switch(currentPage) {
+                    case "หน้าแรก": return <HomeSection setCurrentPage={setCurrentPage} />;
+                    case "ผู้สนใจเข้าศึกษา": return <AdmissionSection />;
+                    case "ระบบสารสนเทศ": return <LoginSection />;
+                    case "นักศึกษาปัจจุบัน": return <StudentsSection />;
+                    case "ติดต่อเรา": return <ContactSection />;
+                    case "บุคลากร": return <PersonnelSection />;
+                    default: return <HomeSection setCurrentPage={setCurrentPage} />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-[#f4f7f9] relative overflow-x-hidden flex flex-col">
+                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-400/5 blur-[120px] pointer-events-none"></div>
+                    <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-orange-400/5 blur-[120px] pointer-events-none"></div>
+
+                    <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    
+                    <main className="flex-1">
+                        {renderContent()}
+                    </main>
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+    </script>
+</body>
+</html>
